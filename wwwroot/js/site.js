@@ -19,8 +19,8 @@
 
             if (JSON.stringify(newData) !== JSON.stringify(previousData)) {
                 console.log("JSON данные изменились.");
-            //    updateMessageHistory(newData);
-               // scrollToBottom();
+                updateMessageHistory(newData);
+                //scrollToBottom();
                 previousData = newData;
             } else {
                 console.log("JSON данные не изменились.");
@@ -46,19 +46,19 @@
 
                 // Проверьте правильный доступ к свойствам JSON
                 console.log('Свойства сообщения:', Object.keys(message));
-                console.log('Content:', message.content);  // Используем правильный регистр
-                console.log('AnswerContent:', message.answerContent);  // Используем правильный регистр
+                console.log('Content:', message.quest);  // Используем правильный регистр
+                console.log('AnswerContent:', message.answer);  // Используем правильный регистр
 
                 // Проверьте наличие и корректность данных
-                if (message.content !== undefined && message.content !== null) {
-                    const messageDiv = $('<div/>').addClass('message-right').text(message.content);
+                if (message.quest !== undefined && message.quest !== null) {
+                    const messageDiv = $('<div/>').addClass('message-right').text(message.quest);
                     messageHistoryDiv.append(messageDiv);
                 } else {
                     console.warn('Сообщение не содержит Content:', message);
                 }
 
-                if (message.answerContent !== undefined && message.answerContent !== '') {
-                    const answerDiv = $('<div/>').addClass('message-left').html(message.answerContent);
+                if (message.answer !== undefined && message.answer !== '') {
+                    const answerDiv = $('<div/>').addClass('message-left').html(message.answer);
                     messageHistoryDiv.append(answerDiv);
                 } else {
                     console.warn('Сообщение не содержит AnswerContent:', message);

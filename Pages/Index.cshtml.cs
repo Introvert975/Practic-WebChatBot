@@ -12,10 +12,10 @@ namespace WebChatBot.Pages
         public UserMessage Umessage { get; set; } = new("");
         Random random = new Random();
         string LastAnswer = string.Empty;
-        int messageId;
+        string messageId;
         int x;
         public Xdata UserXlist { get; set; } = new Xdata();
-        public List<UnitHistory> History { get; set; } = new List<UnitHistory>();
+        public List<UnitHistory> UserHistory { get; set; } = new List<UnitHistory>();
         SendRabbit SendRabbit = new SendRabbit();
         ReceiveRabbit ReceiveRabbit = new ReceiveRabbit("localhost", "PostProcessQueue");
         public void OnGet()
@@ -23,85 +23,57 @@ namespace WebChatBot.Pages
    
             var login = Request.Cookies["UserLoginCookie"];
             if (login != null) {
-                ReceiveRabbit.ReceiveMessage();
+                
                
-                var UserHistory = JsonSerializer.Deserialize<Dictionary<string, 
+                var History = JsonSerializer.Deserialize<Dictionary<string, 
                     List<UnitHistory>>>(System.IO.File.ReadAllText("Data/ChatHistory.json"));
-                if (UserHistory != null)
+                if (History != null)
                 {
-                    if (UserHistory.ContainsKey(login))
+                    if (History.ContainsKey(login))
                     {
-                        History = UserHistory[login];
-
+                       
+                        UserHistory = History[login];
+                            
+                        
                     }
                     else
                     {
-                        Response.Redirect("/Login");
+                        History.Add(login, new List<UnitHistory>());
+                        History[login] = UserHistory;
+                        System.IO.File.WriteAllText("Data/ChatHistory.json", JsonSerializer.Serialize(History));
                     }
                 }
+               
             }
         }
         public IActionResult OnPost() {
             var login = Request.Cookies["UserLoginCookie"];
             if (login != null)
             {
-                if (Umessage != null)
+                if (Umessage.message != null)
                 {
-                    /* if (Umessage.message == "X")
-                     {
-
-
-                         var Xlist = JsonSerializer.Deserialize<Dictionary<string, Xdata>>(System.IO.File.ReadAllText("Data/Xdata.json"));
-                         if (Xlist.ContainsKey(login))
-                         {
-                             UserXlist = Xlist[login];
-                         }
-                         else
-                         {
-                             Xlist.Add(login, new Xdata());
-                             UserXlist = Xlist[login];
-                         }
-                         UserXlist.X = random.Next(1, 1000);
-                         Xlist[login] = UserXlist;
-                         System.IO.File.WriteAllText("Data/Xdata.json", JsonSerializer.Serialize(Xlist));
-                         LastAnswer = "Число от 1 до 1000 загадано";
-                     }
-                     else if(int.TryParse(Umessage.message, out int answer)) 
-                     {
-                         x = Convert.ToInt32(Umessage.message);
-                         var Xlist = JsonSerializer.Deserialize<Dictionary<string, Xdata>>(System.IO.File.ReadAllText("Data/Xdata.json"));
-                         if (Xlist.ContainsKey(login))
-                         {
-                             UserXlist = Xlist[login];
-
-                             if (UserXlist.X > x)
-                             {
-                                 LastAnswer = "Больше";
-                             }
-                             else if (UserXlist.X < x) { LastAnswer = "Меньше"; }
-                             else
-                                 LastAnswer = "Правильно";
-
-                         }
-                         else {
-                             LastAnswer = "Пропишите X";
-                         }
-                     }
-                     */
-                     var UserHistory = JsonSerializer.Deserialize<Dictionary<string,
+                 
+                     var History = JsonSerializer.Deserialize<Dictionary<string,
                      List<UnitHistory>>>(System.IO.File.ReadAllText("Data/ChatHistory.json"));
-                     if (UserHistory != null)
+                     if (History != null)
                      {
-                         History = UserHistory[login];
-                        messageId = History.Max(id => id.Id) + 1;
-                         History.Add(new UnitHistory { quest = Umessage.message, Id = History.Max(id => id.Id) + 1 , answer = LastAnswer});
-
-                         UserHistory[login] = History;
-                         System.IO.File.WriteAllText("Data/ChatHistory.json", JsonSerializer.Serialize(UserHistory));
+                         UserHistory = History[login];
+                        try
+                        {
+                            messageId = UserHistory.Max(id => id.Id) + 1 + "#" + login;
+                            UserHistory.Add(new UnitHistory { quest = Umessage.message, Id = UserHistory.Max(id => id.Id) + 1, answer = LastAnswer });
+                        }
+                        catch
+                        {
+                            messageId = 0 + "#" + login;
+                            UserHistory.Add(new UnitHistory { quest = Umessage.message, Id = 0, answer = LastAnswer });
+                        }
+                         History[login] = UserHistory;
+                         System.IO.File.WriteAllText("Data/ChatHistory.json", JsonSerializer.Serialize(History));
                      }
                     
                     
-                    SendRabbit.SendMessage(Umessage.message, Convert.ToString(messageId));
+                    SendRabbit.SendMessage(Umessage.message, messageId, login);
                   
                 }
                 return RedirectToPage();
