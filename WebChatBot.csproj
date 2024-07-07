@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="PostProcessor\**" />
+    <Compile Remove="PreProcessor\**" />
+    <Compile Remove="Proccesor\**" />
+    <Compile Remove="Processor\**" />
+    <Content Remove="PostProcessor\**" />
+    <Content Remove="PreProcessor\**" />
+    <Content Remove="Proccesor\**" />
+    <Content Remove="Processor\**" />
+    <EmbeddedResource Remove="PostProcessor\**" />
+    <EmbeddedResource Remove="PreProcessor\**" />
+    <EmbeddedResource Remove="Proccesor\**" />
+    <EmbeddedResource Remove="Processor\**" />
+    <None Remove="PostProcessor\**" />
+    <None Remove="PreProcessor\**" />
+    <None Remove="Proccesor\**" />
+    <None Remove="Processor\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="data\AnswerList.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+  </ItemGroup>
+
+</Project>
