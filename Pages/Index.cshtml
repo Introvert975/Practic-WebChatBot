@@ -3,21 +3,14 @@
 @{
     ViewData["Title"] = "Chat";
 }
+<script src="~/js/site.js"></script>
 <form method="post" asp-antiforgery="true">
 <div class="text-center">
     
     <h1 class="display-4">ChatBot</h1>
     
     <div id="History" class="message-history">
-        @foreach (var history in Model.UserHistory)
-        {
-            <div class="message-right">
-                @history.quest
-            </div>
-            <div class="message-left">
-                @history.answer
-            </div>
-        }
+        
 
     </div>
                                       

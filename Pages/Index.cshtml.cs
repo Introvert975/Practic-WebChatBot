@@ -61,18 +61,19 @@ namespace WebChatBot.Pages
                         try
                         {
                             messageId = UserHistory.Max(id => id.Id) + 1 + "#" + login;
-                            UserHistory.Add(new UnitHistory { quest = Umessage.message, Id = UserHistory.Max(id => id.Id) + 1, answer = LastAnswer });
+                            UserHistory.Add(new UnitHistory { quest = Umessage.message+ "&/*DateMess*/->" + DateTime.Now.ToString("HH:mm"), Id = UserHistory.Max(id => id.Id) + 1, answer = LastAnswer });
                         }
                         catch
                         {
                             messageId = 0 + "#" + login;
-                            UserHistory.Add(new UnitHistory { quest = Umessage.message, Id = 0, answer = LastAnswer });
+                            UserHistory.Add(new UnitHistory { quest = Umessage.message + "&/*DateMess*/->" + DateTime.Now.ToString("HH:mm"), Id = 0, answer = LastAnswer });
                         }
                          History[login] = UserHistory;
                          System.IO.File.WriteAllText("Data/ChatHistory.json", JsonSerializer.Serialize(History));
                      }
                     
-                    
+                    ChatHub chatHub = new ChatHub();
+                    chatHub.SendMessage(login, Umessage.message);
                     SendRabbit.SendMessage(Umessage.message, messageId, login);
                   
                 }
